@@ -3,13 +3,14 @@ import ProductCard from "./product-card.component";
 import "./product-list.style.css";
 import { CustomSearch, useDebounce } from "../../sharedUI/customComponents";
 import { initialState, useReducerCart } from "../../reudcer/cartReducer";
+import Grid from "@mui/material/Grid";
+import Paper from "@mui/material/Paper";
 
 function ProductList({cartSetter}) {
   const [productList, setProductList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(null);
 
-  const [cart, setCart] = useState([]);
   const [state,dispatch] = useReducer(useReducerCart,initialState)
 
   const [searchTerm, setSerachTerm] = useState("");
@@ -18,6 +19,7 @@ function ProductList({cartSetter}) {
   const debounced = useDebounce(searchTerm.toLowerCase(),300)
   
   console.log("debounced",debounced)
+
   const fetchProductList = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -40,8 +42,7 @@ function ProductList({cartSetter}) {
   useEffect(() => {
     fetchProductList();
   }, []);
-  // updation run sideEffect
-  useEffect(() => {}, [null]);
+  
 
   const filteredData =
     productList.filter((product) =>
@@ -86,20 +87,34 @@ function ProductList({cartSetter}) {
     <>
       <div className="product-container">
         <h2>Product List :</h2>
-       <div style={{display:"flex",justifyContent:"center",alignItems:"center",marginBlock:"2rem"}}>
+       <div>
 
         <CustomSearch classes={"product-seacrch"} placeholder={"Product Search..."} searchTerm={searchTerm} setSerachTerm={setSerachTerm}/>
        </div>
-
-        <div className={`card-container`}>
+{/* 
+        <Grid item xs={4} className={`card-container`}>
           {filteredData.map((product) => (
-            <ProductCard
-              key={product?.id}
-              product={product}
-              getProduct={handlerGetData}
-            />
+            <Paper>
+                <ProductCard
+                key={product?.id}
+                product={product}
+                getProduct={handlerGetData}
+                />
+            </Paper>
           ))}
-        </div>
+        </Grid> */}
+        
+      <Grid
+        container
+        spacing={{ xs: 2, md: 3 }}
+        columns={{ xs: 4, sm: 8, md: 12 }}
+      >
+        {filteredData.map((product,_) => (
+          <Grid key={product?.id} size={{ xs: 2, sm: 4, md: 4 }}>
+            <ProductCard key={product.id} product={product} getProduct={handlerGetData} />
+          </Grid>
+        ))}
+      </Grid>
       </div>
     </>
   );

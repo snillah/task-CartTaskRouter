@@ -14,15 +14,9 @@ header{
 }
 
 .product-container{
-    margin: 0 auto;
     margin-top:60px;
-    width: 90%;
 }
-.card-container{
-    display: grid;
-    grid-template-columns: auto auto auto auto;
-    gap:3rem;
-}
+
 .side-bar{
     position: fixed;
     top:7.5%;

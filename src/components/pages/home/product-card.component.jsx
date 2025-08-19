@@ -1,12 +1,14 @@
+import Paper from "@mui/material/Paper";
+import Box from '@mui/material/Box';
 import React, { memo } from "react";
 
 const ProductCard = memo(({ product, getProduct }) => {
-  const { category, price, images, title } = product;
+  const { category, price, images, title,description } = product;
 
   return (
     <>
       <div style={{ display: "flex", flexDirection: "column", borderRadius:"12px",width: "300px",boxShadow:"1px 0px 12px grey", padding:"0px" }}>
-        <span
+        <Paper
           className=""
           style={{
             textOverflow: "ellipsis",
@@ -20,8 +22,11 @@ const ProductCard = memo(({ product, getProduct }) => {
           title={title}
         >
           {title}
-        </span>
+        </Paper>
         <span  style={{color:"grey",fontSize:"24px",paddingLeft:"4px"}}>{"Rs."}{price}</span>
+        <Box sx={{textOverflow:"ellipsis",whiteSpace:"nowrap",overflow:"hidden",}}>
+          {description}
+        </Box>
         {
           <img
             src={images}

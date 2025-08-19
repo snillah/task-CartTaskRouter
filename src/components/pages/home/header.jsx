@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 
 
 
@@ -43,6 +44,7 @@ function HeaderPage (props) {
                   </span>
                 </span>
                 <span className="material-symbols-outlined" >
+                  <Link to={'/cart'}></Link>
                   add_shopping_cart
                 </span>
               </div>

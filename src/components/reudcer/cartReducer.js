@@ -2,18 +2,25 @@
 
 
 const initialState ={
-    cartCount :1,
+    cartCount :0,
     cartList :[]
 }
 
 function useReducerCart(state,action){
 
  switch(action.type){
-    case "add":
-        return {...state,cartList:action?.payload}
+    case "ADD":
+        return {
+            ...state,
+            cartList:[...state.cartList,action.payload],
+            cartCount:state.cartCount +1
+        }
     case "delete":
-        const filteredData = state.cartList.filter((cart)=>cart.id !== action?.payload)
-        return {cartList:filteredData}
+        return{
+            ...state,
+            cartList:state.cartList.filter((cartItem)=>cartItem.id !== action.id),
+            cartCount:state.cartCount-1,
+        }
     default:
         return state;
  }
