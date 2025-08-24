@@ -15,10 +15,16 @@ function useReducerCart(state,action){
             cartList:[...state.cartList,action.payload],
             cartCount:state.cartCount +1
         }
-    case "delete":
+    case "Delete":
         return{
             ...state,
             cartList:state.cartList.filter((cartItem)=>cartItem.id !== action.id),
+            cartCount:state.cartCount-1,
+        }
+        case "Quantity":
+        return{
+            ...state,
+            cartList:state.cartList.map((item)=>(item.id === action.id?{...item,quantity:item.quantity+1}:item)),
             cartCount:state.cartCount-1,
         }
     default:

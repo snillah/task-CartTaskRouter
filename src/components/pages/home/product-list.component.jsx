@@ -5,20 +5,20 @@ import { CustomSearch, useDebounce } from "../../sharedUI/customComponents";
 import { initialState, useReducerCart } from "../../reudcer/cartReducer";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
+import { useCartList } from "../../context/cartContext";
 
-function ProductList({cartSetter}) {
+function ProductList({ cartSetter }) {
   const [productList, setProductList] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(null);
 
-  const [state,dispatch] = useReducer(useReducerCart,initialState)
+  const cart = useCartList();
 
   const [searchTerm, setSerachTerm] = useState("");
-  
-  
-  const debounced = useDebounce(searchTerm.toLowerCase(),300)
-  
-  console.log("debounced",debounced)
+
+  const debounced = useDebounce(searchTerm.toLowerCase(), 300);
+
+  console.log("debounced", debounced);
 
   const fetchProductList = useCallback(async () => {
     setIsLoading(true);
@@ -32,7 +32,7 @@ function ProductList({cartSetter}) {
       setProductList(data);
     } catch (err) {
       console.log(err);
-      setIsError(err);
+      setIsError("Error in fetch data");
     } finally {
       setIsLoading(false);
     }
@@ -42,10 +42,9 @@ function ProductList({cartSetter}) {
   useEffect(() => {
     fetchProductList();
   }, []);
-  
 
   const filteredData =
-    productList.filter((product) =>
+    productList?.filter((product) =>
       product?.title.toLowerCase().includes(debounced)
     ) ||
     productList.filter((product) =>
@@ -59,13 +58,21 @@ function ProductList({cartSetter}) {
 
   const handlerGetData = useCallback(
     (product, type) => {
+      const payload ={
+        id:product?.id,
+        title:product?.title,
+        price:product?.price,
+        quantity:1,
+      }
       if ("a" === type) {
-        cartSetter(product)
+
+        cartSetter(payload);
       } else if ("d" === type) {
-        if(confirm("Do you want to Delete the card")){
+        if (confirm("Do you want to Delete the card")) {
           setProductList(
             productList.filter(
-              (value) => value.title.toLowerCase() !== product.title.toLowerCase()
+              (value) =>
+                value.title.toLowerCase() !== product.title.toLowerCase()
             )
           );
         }
@@ -74,47 +81,46 @@ function ProductList({cartSetter}) {
     [productList]
   );
 
-
   if (isLoading) {
     return <div className="is-loading">Loading....</div>;
   }
 
   if (isError) {
-    return <div>Error: {isError}</div>;
+    return <div className="product-container">Error: {isError}</div>;
   }
 
   return (
     <>
       <div className="product-container">
         <h2>Product List :</h2>
-       <div>
+        <div style={{marginBottom:"10px"}}>
+          <CustomSearch
+            classes={"product-seacrch"}
+            placeholder={"Product Search..."}
+            searchTerm={searchTerm}
+            setSerachTerm={setSerachTerm}
+          />
+        </div>
 
-        <CustomSearch classes={"product-seacrch"} placeholder={"Product Search..."} searchTerm={searchTerm} setSerachTerm={setSerachTerm}/>
-       </div>
-{/* 
-        <Grid item xs={4} className={`card-container`}>
-          {filteredData.map((product) => (
-            <Paper>
+        <Grid
+          container
+          spacing={{ xs: 2, md: 3 }}
+          columns={{ xs: 4, sm: 8, md: 12 }}
+        >
+          {filteredData?.length > 0 ? (
+            filteredData.map((product, _) => (
+              <Grid key={product?.id} size={{ xs: 2, sm: 4, md: 4 }}>
                 <ProductCard
-                key={product?.id}
-                product={product}
-                getProduct={handlerGetData}
+                  key={product.id}
+                  product={product}
+                  getProduct={handlerGetData}
                 />
-            </Paper>
-          ))}
-        </Grid> */}
-        
-      <Grid
-        container
-        spacing={{ xs: 2, md: 3 }}
-        columns={{ xs: 4, sm: 8, md: 12 }}
-      >
-        {filteredData.map((product,_) => (
-          <Grid key={product?.id} size={{ xs: 2, sm: 4, md: 4 }}>
-            <ProductCard key={product.id} product={product} getProduct={handlerGetData} />
-          </Grid>
-        ))}
-      </Grid>
+              </Grid>
+            ))
+          ) : (
+            <div>{"No data Found"}</div>
+          )}
+        </Grid>
       </div>
     </>
   );

@@ -11,20 +11,28 @@ import { useCartChange, useCartList } from "../../context/cartContext";
 function Home() {
   // const [cartList, setCartList] = useState([]);
   const cart = useCartList();
-    const dispatch = useCartChange();
+  const dispatch = useCartChange();
   // const [state, dispatch] = useReducer(useReducerCart, initialState);
   const naviate = useNavigate();
-  console.log("cart",cart)
-  function getCartList(product) {
-      const existData = cart.cartList.find((data) => data?.id === product.id);
-      if (existData) {
-        alert("Its already exist");
-      }
-      if (!existData) {
-        dispatch({ type: "ADD", payload: product });
-      }
-  }
+  // console.log("cart", cart);
 
+  function checkData (id) {
+    console.log("cartList",id,cart)
+  }
+function getCartList(product) {
+  const existData = cart.cartList.find(item => item.id === product.id);
+  console.log("handler",existData,cart);
+  if (existData) {
+    dispatch({ type: "Quantity", id: product.id });
+  } else {
+    console.log("oldState",cart);
+    dispatch({ type: "ADD", payload: product });
+    console.log("NewState",cart);
+  }
+}
+useEffect(() => {
+  console.log("Updated Cart:", cart.cartList);
+}, [cart.cartList]);
   return (
     <>
       <div className="main" style={{ position: "relative" }}>
@@ -34,7 +42,7 @@ function Home() {
         />
         <Container>
           <Grid container spacing={4}>
-          <ProductList cartSetter={getCartList} />
+            <ProductList cartSetter={(product)=>getCartList(product)} />
           </Grid>
         </Container>
       </div>

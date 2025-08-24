@@ -4,14 +4,16 @@ import { Route, Routes } from "react-router-dom";
 import CartPage from "./components/pages/home/sideBar";
 import { Navigate } from "react-router";
 import Listpage from "./components/pages/llist-page";
-import { CartDataProvider } from "./components/context/cartContext";
+import { useCartList } from "./components/context/cartContext";
 
 let url = "https://api.escuelajs.co/api/v1/products";
 function App() {
   // const {data,isLoading} = useCustomHook(url);
+  const cart = useCartList()
+  console.log("cart",cart);
   return (
     <>
-      <CartDataProvider>
+      {/* <CartDataProvider> */}
         <Routes>
           <Route
             path={"/"}
@@ -21,7 +23,7 @@ function App() {
           <Route path={"/cart"} element={<CartPage />}></Route>
           <Route path={"/listpage"} element={<Listpage />}></Route>
         </Routes>
-      </CartDataProvider>
+      {/* </CartDataProvider> */}
     </>
   );
 }
